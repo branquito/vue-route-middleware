@@ -18,7 +18,7 @@ const routes = [
     name: 'account',
     component: Account,
     meta: {
-      middleware: [log, auth, log]
+      middleware: [log, auth]
     }
   }
 ]
@@ -49,16 +49,14 @@ router.beforeEach((to, from, next) => {
 })
 
 function nextFactory(context, middleware, index) {
-  if (!middleware[index]) {
+  const subsequentMiddleware = middleware[index]
+  if (!subsequentMiddleware) {
     return context.next // no more middlewares, return genuine next()
   } else {
-    const subsequentMiddleware = nextFactory(context, middleware, index + 1)
-    console.log('subs', subsequentMiddleware)
-    // context.next()
-
     return () => {
-      console.log('I am fake next()')
-      context.next() // genuine next()
+      context.next()
+      const nextMiddleware = nextFactory(context, middleware, index + 1)
+      subsequentMiddleware({ ...context, next: nextMiddleware })
     }
   }
 }
