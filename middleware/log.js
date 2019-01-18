@@ -1,6 +1,6 @@
 export default function log({ next }) {
   console.warn('now in logger middleware')
-
-  console.log('next is: ', next)
+  // Uncomment below to be able to switch to /account
+  // window.localStorage.setItem('jwt', 'value')
   return next()
 }

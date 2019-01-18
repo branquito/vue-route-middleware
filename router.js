@@ -45,6 +45,7 @@ router.beforeEach((to, from, next) => {
       next: nextMiddleware
     })
   }
+  // No middlewares attached per route
   next()
 })
 
@@ -53,8 +54,8 @@ function nextFactory(context, middleware, index) {
   if (!subsequentMiddleware) {
     return context.next // no more middlewares, return genuine next()
   } else {
-    return () => {
-      context.next()
+    return (...params) => {
+      context.next(...params)
       const nextMiddleware = nextFactory(context, middleware, index + 1)
       subsequentMiddleware({ ...context, next: nextMiddleware })
     }
